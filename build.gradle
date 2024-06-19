@@ -18,6 +18,8 @@ dependencies {
     implementation("io.quarkus:quarkus-oidc")
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
+    testImplementation('io.quarkus:quarkus-test-vertx')
+    testImplementation('io.quarkus:quarkus-test-hibernate-reactive-panache')
 }
 
 group 'tech.woodandsafety'

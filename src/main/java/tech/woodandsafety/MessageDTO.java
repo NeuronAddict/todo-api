@@ -1,6 +1,6 @@
 package tech.woodandsafety;
 
-import java.util.Date;
+import java.time.LocalDate;
 
-public record MessageDTO(String message, CustomUser author, Date dueDate) {
+public record MessageDTO(String message, CustomUser author, LocalDate dueDate) {
 }
