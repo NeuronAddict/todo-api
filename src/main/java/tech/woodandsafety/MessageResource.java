@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 import tech.woodandsafety.data.Message;
 import tech.woodandsafety.dto.MessageDTO;
-import tech.woodandsafety.mapper.MessageMapper;
+import tech.woodandsafety.mapper.MessageCreateMapper;
 
 import java.util.List;
 
@@ -16,17 +16,17 @@ public class MessageResource {
 
     private static final Logger LOGGER = Logger.getLogger(MessageResource.class);
 
-    private final MessageMapper messageMapper;
+    private final MessageCreateMapper messageMapper;
 
-    public MessageResource(MessageMapper messageMapper) {
+    public MessageResource(MessageCreateMapper messageMapper) {
         this.messageMapper = messageMapper;
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<List<Message>> get() {
+    public Uni<List<MessageDTO>> get() {
 
-        return Message.listAll();
+        return Message.<Message>listAll().map(messages -> messages.stream().map(message -> messageMapper.toDisplayDTO(message)).toList());
     }
 
     @POST
@@ -34,7 +34,7 @@ public class MessageResource {
     public Uni<MessageDTO> post(MessageDTO message) {
 
         return Uni.createFrom().item(message).map(messageMapper::toEntity)
-                .flatMap(message1 -> message1.<Message>persist()).map(messageMapper::toDTO);
+                .flatMap(message1 -> message1.<Message>persist()).map(messageMapper::toDisplayDTO);
     }
 
     @PUT
@@ -45,7 +45,7 @@ public class MessageResource {
         return Uni.createFrom().item(message).map(messageMapper::toEntity).map(message1 -> {
             message1.id = id;
             return message1;
-        }).flatMap(message1 -> message1.<Message>persist()).map(messageMapper::toDTO);
+        }).flatMap(message1 -> message1.<Message>persist()).map(messageMapper::toDisplayDTO);
     }
 
     @DELETE

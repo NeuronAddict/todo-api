@@ -20,6 +20,8 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation('io.quarkus:quarkus-test-vertx')
     testImplementation('io.quarkus:quarkus-test-hibernate-reactive-panache')
+    testImplementation("io.quarkus:quarkus-test-oidc-server")
+    testImplementation("io.quarkus:quarkus-panache-mock")
 }
 
 group 'tech.woodandsafety'

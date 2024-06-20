@@ -6,12 +6,15 @@ import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;
 import io.quarkus.security.jpa.UserDefinition;
 import io.quarkus.security.jpa.Username;
+import io.smallrye.mutiny.Uni;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
 @Entity
 @UserDefinition
 public class CustomUser extends PanacheEntity {
 
+    @Column(unique = true)
     @Username
     String name;
 
@@ -44,4 +47,7 @@ public class CustomUser extends PanacheEntity {
     //    @OneToMany
 //    public Collection<Message> messages;
 
+    public static Uni<CustomUser> findByName(String name) {
+        return CustomUser.<CustomUser>find("name", name).firstResult();
+    }
 }
