@@ -1,11 +1,13 @@
 package tech.woodandsafety;
 
-import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
+import tech.woodandsafety.data.Message;
+import tech.woodandsafety.dto.MessageDTO;
+import tech.woodandsafety.mapper.MessageMapper;
 
 import java.util.List;
 
@@ -29,21 +31,21 @@ public class MessageResource {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<Message> post(MessageDTO message) {
+    public Uni<MessageDTO> post(MessageDTO message) {
 
         return Uni.createFrom().item(message).map(messageMapper::toEntity)
-                .flatMap(message1 -> message1.persist());
+                .flatMap(message1 -> message1.<Message>persist()).map(messageMapper::toDTO);
     }
 
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<Message> put(@PathParam("id") Long id, MessageDTO message) {
+    public Uni<MessageDTO> put(@PathParam("id") Long id, MessageDTO message) {
 
         return Uni.createFrom().item(message).map(messageMapper::toEntity).map(message1 -> {
             message1.id = id;
             return message1;
-        }).flatMap(message1 -> message1.persist());
+        }).flatMap(message1 -> message1.<Message>persist()).map(messageMapper::toDTO);
     }
 
     @DELETE

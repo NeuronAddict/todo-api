@@ -1,4 +1,4 @@
-package tech.woodandsafety;
+package tech.woodandsafety.data;
 
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
 import jakarta.persistence.Entity;
@@ -12,16 +12,16 @@ import java.util.List;
 @Entity
 public class Message extends PanacheEntity {
 
-    public String message;
+    String message;
 
     @ManyToOne
     @JoinColumn(name = "author_id")
-    public CustomUser author;
+    CustomUser author;
 
     @OneToMany
-    public List<LogEntry> logEntry;
+    List<LogEntry> logEntry;
 
-    public LocalDate dueDate;
+    LocalDate dueDate;
 
     public Message(String message, CustomUser author, LocalDate dueDate) {
         this.message = message;
@@ -29,7 +29,21 @@ public class Message extends PanacheEntity {
         this.dueDate = dueDate;
     }
 
-    protected Message() {
+    protected Message() {}
 
+    public String getMessage() {
+        return message;
+    }
+
+    public CustomUser getAuthor() {
+        return author;
+    }
+
+    public List<LogEntry> getLogEntry() {
+        return logEntry;
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
     }
 }

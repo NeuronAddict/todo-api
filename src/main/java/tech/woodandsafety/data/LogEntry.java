@@ -1,4 +1,4 @@
-package tech.woodandsafety;
+package tech.woodandsafety.data;
 
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
 import jakarta.persistence.Entity;

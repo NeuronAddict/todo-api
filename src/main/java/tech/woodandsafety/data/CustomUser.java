@@ -1,4 +1,4 @@
-package tech.woodandsafety;
+package tech.woodandsafety.data;
 
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
@@ -13,13 +13,13 @@ import jakarta.persistence.Entity;
 public class CustomUser extends PanacheEntity {
 
     @Username
-    public String name;
+    String name;
 
     @Password
-    public String hashedPassword;
+    String hashedPassword;
 
     @Roles
-    public String roles;
+    String roles;
 
     public CustomUser(String name, String hashedPassword, String roles) {
         this.name = name;

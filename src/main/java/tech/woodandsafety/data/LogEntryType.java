@@ -1,4 +1,4 @@
-package tech.woodandsafety;
+package tech.woodandsafety.data;
 
 public enum LogEntryType {
     delete,
