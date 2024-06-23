@@ -67,4 +67,27 @@ public class EntitiesTest {
 
     }
 
+    @Test
+    @TestReactiveTransaction
+    public void testLogEntry(UniAsserter uniAsserter) {
+
+        CustomUser user1 = new CustomUser("alice", "secret", "admin");
+        CustomUser user2 = new CustomUser("bob", "secret", "user");
+
+        Message message = new Message("hello", user1, LocalDate.of(2024, 12, 12));
+
+        LogEntry logEntry = new LogEntry(LogEntryType.delete, message, user2);
+
+        uniAsserter.execute(() -> Panache.withTransaction(user1::persist));
+        uniAsserter.execute(() -> Panache.withTransaction(user2::persist));
+
+        uniAsserter.execute(() -> Panache.withTransaction(message::persist));
+        uniAsserter.execute(() -> Panache.withTransaction(logEntry::persist));
+
+        uniAsserter.assertEquals(() -> LogEntry.findByInitiator("alice").map(List::size), 0);
+        uniAsserter.assertEquals(() -> LogEntry.findByInitiator("bob").map(List::size), 1);
+
+        uniAsserter.assertEquals(() -> LogEntry.findByInitiator("bob").map(logEntries -> logEntries.get(0)).map(logEntry1 -> logEntry1.message), message);
+    }
+
 }
