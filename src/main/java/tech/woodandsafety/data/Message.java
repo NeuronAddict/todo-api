@@ -49,6 +49,10 @@ public class Message extends PanacheEntity {
         return dueDate;
     }
 
+    public static Uni<List<Message>> findByAuthor(String name) {
+        return find("SELECT m FROM Message m JOIN m.author a WHERE a.name = ?1", name).list();
+    }
+
     @Transactional
     Uni<Message> updateAuthor(String author) {
         return CustomUser.findByName(author).flatMap(user -> {

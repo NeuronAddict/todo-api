@@ -29,6 +29,9 @@ public class EntitiesTest {
         uniAsserter.assertEquals(() -> Message.<Message>listAll().map(List::size), 1);
         uniAsserter.assertEquals(() -> Message.findAll().firstResult(), message);
 
+        uniAsserter.assertEquals(() -> Message.findByAuthor("bob").map(List::size), 0);
+        uniAsserter.assertEquals(() -> Message.findByAuthor("alice").map(List::size), 1);
+        uniAsserter.assertEquals(() -> Message.findByAuthor("alice").map(messages -> messages.get(0)).map(message1 -> message1.author), user);
     }
 
     @Test
