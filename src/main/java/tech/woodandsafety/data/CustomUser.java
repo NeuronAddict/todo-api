@@ -44,10 +44,16 @@ public class CustomUser extends PanacheEntity {
         return roles;
     }
 
-    //    @OneToMany
-//    public Collection<Message> messages;
-
     public static Uni<CustomUser> findByName(String name) {
-        return CustomUser.<CustomUser>find("name", name).firstResult();
+        return find("name", name).firstResult();
+    }
+
+    @Override
+    public String toString() {
+        return "CustomUser{" +
+                "name='" + name + '\'' +
+                ", hashedPassword='" + hashedPassword + '\'' +
+                ", roles='" + roles + '\'' +
+                '}';
     }
 }
