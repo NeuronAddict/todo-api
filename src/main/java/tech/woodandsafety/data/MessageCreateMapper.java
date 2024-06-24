@@ -17,7 +17,7 @@ public class MessageCreateMapper implements CreateMapper<Message, MessageDTO, Me
     public Uni<Message> updateWithDTO(Message message, MessageDTO messageDTO) {
         message.message = messageDTO.message();
         message.dueDate = messageDTO.dueDate();
-        return message.updateAuthor(messageDTO.author());
+        return Uni.createFrom().item(message);
     }
 
     @Override

@@ -63,10 +63,6 @@ public class EntitiesTest {
 
         uniAsserter.execute(() -> Panache.withSession(message::persist));
 
-        uniAsserter.assertEquals(() -> message.updateAuthor("bob2").map(Message::getAuthor), user2);
-
-        uniAsserter.assertEquals(() -> Message.<Message>findById(message.id).map(message1 -> message1.author), user2);
-
     }
 
     @Test

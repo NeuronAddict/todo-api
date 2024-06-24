@@ -1,6 +1,5 @@
 package tech.woodandsafety.data;
 
-import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
 import io.smallrye.mutiny.Uni;
 import jakarta.persistence.Entity;
@@ -16,7 +15,7 @@ public class Message extends PanacheEntity {
     String message;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id", updatable = false)
     CustomUser author;
 
     LocalDate dueDate;
@@ -44,17 +43,6 @@ public class Message extends PanacheEntity {
 
     public static Uni<List<Message>> findByAuthor(String name) {
         return find("SELECT m FROM Message m JOIN m.author a WHERE a.name = ?1", name).list();
-    }
-
-    Uni<Message> updateAuthor(String author) {
-        return CustomUser.findByName(author)
-                .onItem()
-                .ifNull()
-                .failWith(() -> new UnsupportedOperationException("Author " + author + "not found"))
-                .flatMap(user -> {
-                    this.author = user;
-                    return Panache.withTransaction(this::persistAndFlush);
-                });
     }
 
     @Override
