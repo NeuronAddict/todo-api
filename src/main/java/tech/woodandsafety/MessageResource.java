@@ -81,15 +81,14 @@ public class MessageResource {
     @Path("/{id}")
     @Produces(MediaType.TEXT_PLAIN)
     public Uni<Response> delete(@PathParam("id") Long id) {
-        return Message.<Message>findById(id)
-                .onItem()
-                .ifNotNull()
-                .transformToUni(message -> Panache.withTransaction(message::delete))
-                .onItem().transform(item -> Response.noContent().build())
-                .onFailure().invoke(LOGGER::error)
+        return Panache.withTransaction(() -> Message.<Message>findById(id)
+                .log("delete")
+                .onItem().ifNotNull().transformToUni(message ->
+                        message.delete()
+                                .log("delete.notNull")
+                        .onItem().transform(item -> Response.noContent().build()))
                 .onItem()
                 .ifNull()
-                .fail()
-                .replaceWith(Response.status(404).build());
+                .continueWith(Response.status(Response.Status.NOT_FOUND).build()));
     }
 }

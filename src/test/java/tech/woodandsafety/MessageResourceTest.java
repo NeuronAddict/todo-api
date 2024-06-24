@@ -87,7 +87,21 @@ class MessageResourceTest {
                 .statusCode(RestResponse.StatusCode.OK)
                 .extract().as(MessageDTO.class)).isEqualTo(newCreated);
 
+        given().auth().oauth2(token("alice"))
+                .when().delete(newEntityLocation)
+                .then()
+                .log()
+                .everything(true)
+                .statusCode(RestResponse.StatusCode.NO_CONTENT);
 
+        assertThat(given().auth().oauth2(token("alice"))
+                .when().get("/messages")
+                .then()
+                .log()
+                .everything(true)
+                .statusCode(200)
+                .extract().as(new TypeRef<List<MessageDTO>>() {
+                })).isEqualTo(messageDTOs);
     }
 
     @Test
@@ -95,6 +109,17 @@ class MessageResourceTest {
 
         given().auth().oauth2(token("alice"))
                 .when().get("/messages/99999")
+                .then()
+                .log()
+                .everything(true)
+                .statusCode(404);
+    }
+
+    @Test
+    public void testDeleteMissing() {
+
+        given().auth().oauth2(token("alice"))
+                .when().delete("/messages/99999")
                 .then()
                 .log()
                 .everything(true)
