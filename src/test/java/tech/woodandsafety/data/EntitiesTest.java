@@ -18,7 +18,7 @@ public class EntitiesTest {
 
         CustomUser user = new CustomUser("alice2", "secret", "user");
 
-        Message message = new Message("hello", user, LocalDate.of(2024,12,12));
+        Message message = new Message("hello", user, LocalDate.of(2024, 12, 12));
 
         uniAsserter.execute(() -> Panache.withTransaction(user::persist));
         uniAsserter.execute(() -> Panache.withTransaction(message::persist));
@@ -56,7 +56,7 @@ public class EntitiesTest {
         CustomUser user1 = new CustomUser("alice2", "secret", "admin");
         CustomUser user2 = new CustomUser("bob2", "secret", "user");
 
-        Message message = new Message("hello", user1, LocalDate.of(2024,12,12));
+        Message message = new Message("hello", user1, LocalDate.of(2024, 12, 12));
 
         uniAsserter.execute(() -> Panache.withTransaction(user1::persist));
         uniAsserter.execute(() -> Panache.withTransaction(user2::persist));

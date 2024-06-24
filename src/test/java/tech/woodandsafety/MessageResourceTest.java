@@ -3,6 +3,7 @@ package tech.woodandsafety;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.keycloak.client.KeycloakTestClient;
 import io.quarkus.test.oidc.server.OidcWiremockTestResource;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
@@ -11,13 +12,12 @@ import jakarta.ws.rs.core.UriInfo;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.junit.jupiter.api.Test;
 import tech.woodandsafety.dto.MessageDTO;
-import io.quarkus.test.keycloak.client.KeycloakTestClient;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 @QuarkusTest
@@ -31,11 +31,10 @@ class MessageResourceTest {
     KeycloakTestClient keycloakClient = new KeycloakTestClient();
 
     List<MessageDTO> messageDTOs = List.of(
-            new MessageDTO("hello", "alice", LocalDate.of(2024,12,12))
+            new MessageDTO("hello", "alice", LocalDate.of(2024, 12, 12))
     );
 
-    MessageDTO newCreated = new MessageDTO("hello2", "alice3", LocalDate.of(2024,12,12));
-
+    MessageDTO newCreated = new MessageDTO("hello2", "alice3", LocalDate.of(2024, 12, 12));
 
 
     @Test
@@ -48,7 +47,7 @@ class MessageResourceTest {
                 .everything(true)
                 .statusCode(200)
                 .extract().as(new TypeRef<List<MessageDTO>>() {
-                        })).isEqualTo(messageDTOs);
+                })).isEqualTo(messageDTOs);
 
         String newEntityLocation = given().auth().oauth2(token("alice"))
                 .contentType(ContentType.JSON)
@@ -71,13 +70,13 @@ class MessageResourceTest {
 
 
         given().auth().oauth2(token("alice"))
-                    .contentType(ContentType.JSON)
-                    .body(newCreated)
-                    .when().put(newEntityLocation)
-                    .then()
-                    .log()
-                    .everything(true)
-                    .statusCode(204);
+                .contentType(ContentType.JSON)
+                .body(newCreated)
+                .when().put(newEntityLocation)
+                .then()
+                .log()
+                .everything(true)
+                .statusCode(204);
 
         assertThat(given().auth().oauth2(token("alice"))
                 .when().get(newEntityLocation)

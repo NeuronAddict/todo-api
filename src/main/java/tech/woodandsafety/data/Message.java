@@ -27,7 +27,8 @@ public class Message extends PanacheEntity {
         this.dueDate = dueDate;
     }
 
-    protected Message() {}
+    protected Message() {
+    }
 
     public String getMessage() {
         return message;
@@ -51,9 +52,9 @@ public class Message extends PanacheEntity {
                 .ifNull()
                 .failWith(() -> new UnsupportedOperationException("Author " + author + "not found"))
                 .flatMap(user -> {
-            this.author = user;
-            return Panache.withTransaction(this::persistAndFlush);
-        });
+                    this.author = user;
+                    return Panache.withTransaction(this::persistAndFlush);
+                });
     }
 
     @Override

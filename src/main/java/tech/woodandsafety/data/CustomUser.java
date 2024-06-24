@@ -30,7 +30,8 @@ public class CustomUser extends PanacheEntity {
         this.roles = roles;
     }
 
-    protected CustomUser() {}
+    protected CustomUser() {
+    }
 
     public String getName() {
         return name;

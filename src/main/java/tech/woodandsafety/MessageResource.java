@@ -9,8 +9,8 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import org.jboss.logging.Logger;
 import tech.woodandsafety.data.Message;
-import tech.woodandsafety.dto.MessageDTO;
 import tech.woodandsafety.data.MessageCreateMapper;
+import tech.woodandsafety.dto.MessageDTO;
 
 import java.net.URI;
 
@@ -76,8 +76,8 @@ public class MessageResource {
                 .ifNull()
                 .failWith(() -> new UnsupportedOperationException("Can't find Message with id " + id))
                 .invoke(message -> System.out.println("Find message in PUT : " + message))
-                        .flatMap(message -> messageMapper.updateWithDTO(message, messageDTO))
-                        .flatMap(message -> Panache.withTransaction(message::<Message>persistAndFlush)
+                .flatMap(message -> messageMapper.updateWithDTO(message, messageDTO))
+                .flatMap(message -> Panache.withTransaction(message::<Message>persistAndFlush)
                 )
                 .replaceWith(Response.noContent().build())
                 .onFailure()
@@ -89,14 +89,14 @@ public class MessageResource {
     @Produces(MediaType.TEXT_PLAIN)
     public Uni<Response> delete(@PathParam("id") Long id) {
         return Panache.withTransaction(() -> Message.<Message>findById(id)
-                .log("delete")
-                .onItem().ifNotNull().transformToUni(message ->
-                        message.delete()
-                                .log("delete.notNull")
-                        .onItem().transform(item -> Response.noContent().build()))
-                .onItem()
-                .ifNull()
-                .continueWith(Response.status(Response.Status.NOT_FOUND).build()))
+                        .log("delete")
+                        .onItem().ifNotNull().transformToUni(message ->
+                                message.delete()
+                                        .log("delete.notNull")
+                                        .onItem().transform(item -> Response.noContent().build()))
+                        .onItem()
+                        .ifNull()
+                        .continueWith(Response.status(Response.Status.NOT_FOUND).build()))
                 .onFailure()
                 .invoke(LOGGER::error);
     }
