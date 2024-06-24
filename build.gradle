@@ -10,20 +10,28 @@ repositories {
 
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
-    implementation 'io.quarkus:quarkus-rest'
+    implementation 'io.quarkus:quarkus-rest-jackson'
     implementation 'io.quarkus:quarkus-hibernate-reactive-panache'
     implementation 'io.quarkus:quarkus-reactive-pg-client'
     implementation 'io.quarkus:quarkus-arc'
+    implementation "io.quarkus:quarkus-security-jpa-reactive"
+    implementation("io.quarkus:quarkus-oidc")
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
+    testImplementation('io.quarkus:quarkus-test-vertx')
+    testImplementation('io.quarkus:quarkus-test-hibernate-reactive-panache')
+    testImplementation("io.quarkus:quarkus-test-oidc-server")
+    testImplementation("io.quarkus:quarkus-panache-mock")
+    testImplementation("io.quarkus:quarkus-test-keycloak-server")
+    testImplementation("org.assertj:assertj-core:3.25.1")
 }
 
 group 'tech.woodandsafety'
 version '1.0-SNAPSHOT'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 test {
