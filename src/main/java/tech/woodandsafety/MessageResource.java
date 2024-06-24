@@ -2,21 +2,17 @@ package tech.woodandsafety;
 
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.smallrye.mutiny.Uni;
-import io.smallrye.mutiny.tuples.Tuple2;
-import io.vertx.mutiny.sqlclient.Tuple;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import org.jboss.logging.Logger;
-import tech.woodandsafety.data.CustomUser;
 import tech.woodandsafety.data.Message;
 import tech.woodandsafety.dto.MessageDTO;
 import tech.woodandsafety.data.MessageCreateMapper;
 
 import java.net.URI;
-import java.util.List;
 
 @Path("messages")
 public class MessageResource {
@@ -45,8 +41,15 @@ public class MessageResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Uni<Response> get(@PathParam("id") Long id) {
 
-        return Message.<Message>findById(id).map(messageMapper::toDisplayDTO)
-                .map(messageDTO -> Response.ok(messageDTO).build());
+        return Message.<Message>findById(id)
+                .onItem()
+                .ifNotNull()
+                .transform(message -> Response.ok(messageMapper.toDisplayDTO(message)).build())
+                .onItem()
+                .ifNull()
+                .continueWith(() -> Response.status(Response.Status.NOT_FOUND).build())
+                .onFailure()
+                .invoke(LOGGER::error);
     }
 
 
@@ -58,7 +61,9 @@ public class MessageResource {
         return Uni.createFrom().item(message).flatMap(messageMapper::toEntity)
                 .flatMap(message1 -> Panache.withTransaction(message1::<Message>persistAndFlush))
                 .log()
-                .map(message1 -> Response.created(URI.create(uriInfo.getPath() + "/" + message1.id)).build());
+                .map(message1 -> Response.created(URI.create(uriInfo.getPath() + "/" + message1.id)).build())
+                .onFailure()
+                .invoke(LOGGER::error);
     }
 
     @PUT
@@ -74,7 +79,9 @@ public class MessageResource {
                         .flatMap(message -> messageMapper.updateWithDTO(message, messageDTO))
                         .flatMap(message -> Panache.withTransaction(message::<Message>persistAndFlush)
                 )
-                .replaceWith(Response.noContent().build());
+                .replaceWith(Response.noContent().build())
+                .onFailure()
+                .invoke(LOGGER::error);
     }
 
     @DELETE
@@ -89,6 +96,8 @@ public class MessageResource {
                         .onItem().transform(item -> Response.noContent().build()))
                 .onItem()
                 .ifNull()
-                .continueWith(Response.status(Response.Status.NOT_FOUND).build()));
+                .continueWith(Response.status(Response.Status.NOT_FOUND).build()))
+                .onFailure()
+                .invoke(LOGGER::error);
     }
 }
