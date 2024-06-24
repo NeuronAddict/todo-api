@@ -1,72 +1,108 @@
 package tech.woodandsafety;
 
-import io.quarkus.hibernate.reactive.panache.Panache;
-import io.quarkus.panache.mock.PanacheMock;
-import io.quarkus.test.Mock;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.oidc.server.OidcWiremockTestResource;
-import io.smallrye.jwt.build.Jwt;
-import io.smallrye.mutiny.Uni;
-import io.vertx.mutiny.core.Vertx;
-import jakarta.inject.Inject;
+import io.restassured.common.mapper.TypeRef;
+import io.restassured.http.ContentType;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.UriInfo;
+import org.jboss.resteasy.reactive.RestResponse;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import tech.woodandsafety.data.CustomUser;
-import tech.woodandsafety.data.Message;
 import tech.woodandsafety.dto.MessageDTO;
-import tech.woodandsafety.mapper.CreateMapper;
+import io.quarkus.test.keycloak.client.KeycloakTestClient;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.*;
+
 
 @QuarkusTest
 @QuarkusTestResource(OidcWiremockTestResource.class)
 @TestTransaction
 class MessageResourceTest {
 
-    CustomUser user = new CustomUser("alice", "secret", "user");
+    @Context
+    UriInfo uriInfo;
 
-    List<Message> messages = List.of(
-            new Message("hello", user, LocalDate.of(2024,12,12))
-    );
+    KeycloakTestClient keycloakClient = new KeycloakTestClient();
 
     List<MessageDTO> messageDTOs = List.of(
             new MessageDTO("hello", "alice", LocalDate.of(2024,12,12))
     );
 
-    @Test
-    public void testGetMessages() {
-        PanacheMock.mock(Message.class);
-        PanacheMock.mock(CustomUser.class);
+    MessageDTO newCreated = new MessageDTO("hello2", "alice3", LocalDate.of(2024,12,12));
 
-        Mockito.when(Message.<Message>listAll()).thenReturn(Uni.createFrom().item(messages));
-        MessageDTO[] result =  given().auth().oauth2(token("alice", "user"))
+
+
+    @Test
+    public void testModifyMessage() {
+
+        assertThat(given().auth().oauth2(token("alice"))
                 .when().get("/messages")
                 .then()
                 .log()
                 .everything(true)
                 .statusCode(200)
+                .extract().as(new TypeRef<List<MessageDTO>>() {
+                        })).isEqualTo(messageDTOs);
+
+        String newEntityLocation = given().auth().oauth2(token("alice"))
+                .contentType(ContentType.JSON)
+                .body(messageDTOs.get(0))
+                .when().post("/messages")
+                .then()
+                .log()
+                .everything(true)
+                .statusCode(RestResponse.StatusCode.CREATED)
                 .extract()
-                .as(MessageDTO[].class);
-        System.out.println(Arrays.asList(result));
-        assertEquals(Arrays.asList(result), messageDTOs);
+                .header("Location");
+
+        assertThat(given().auth().oauth2(token("alice"))
+                .when().get(newEntityLocation)
+                .then()
+                .log()
+                .everything(true)
+                .statusCode(RestResponse.StatusCode.OK)
+                .extract().as(MessageDTO.class)).isEqualTo(messageDTOs.get(0));
+
+
+        given().auth().oauth2(token("alice"))
+                    .contentType(ContentType.JSON)
+                    .body(newCreated)
+                    .when().put(newEntityLocation)
+                    .then()
+                    .log()
+                    .everything(true)
+                    .statusCode(204);
+
+        assertThat(given().auth().oauth2(token("alice"))
+                .when().get(newEntityLocation)
+                .then()
+                .log()
+                .everything(true)
+                .statusCode(RestResponse.StatusCode.OK)
+                .extract().as(MessageDTO.class)).isEqualTo(newCreated);
+
+
     }
 
-    private String token(String username, String role) {
-        return Jwt.preferredUserName(username)
-                .groups(role)
-                .issuer("https://server.example.com")
-                .audience("https://service.example.com")
-                .sign();
+    @Test
+    public void testGetMissing() {
+
+        given().auth().oauth2(token("alice"))
+                .when().get("/messages/99999")
+                .then()
+                .log()
+                .everything(true)
+                .statusCode(404);
+    }
+
+    protected String token(@SuppressWarnings("SameParameterValue") String userName) {
+        return keycloakClient.getAccessToken(userName);
     }
 
 }

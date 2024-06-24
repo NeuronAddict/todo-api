@@ -16,7 +16,7 @@ public class EntitiesTest {
     @TestReactiveTransaction
     public void testMessage(UniAsserter uniAsserter) {
 
-        CustomUser user = new CustomUser("alice", "secret", "user");
+        CustomUser user = new CustomUser("alice2", "secret", "user");
 
         Message message = new Message("hello", user, LocalDate.of(2024,12,12));
 
@@ -26,27 +26,26 @@ public class EntitiesTest {
         uniAsserter.execute(() -> Message.<Message>findAll().list().onItem().invoke(messages1 -> System.out.println(messages1)));
         uniAsserter.execute(() -> CustomUser.<CustomUser>findAll().list().onItem().invoke(users -> System.out.println(users)));
 
-        uniAsserter.assertEquals(() -> Message.<Message>listAll().map(List::size), 1);
-        uniAsserter.assertEquals(() -> Message.findAll().firstResult(), message);
+        uniAsserter.assertEquals(() -> Message.findByAuthor("alice2").map(messages -> messages.get(0)), message);
 
-        uniAsserter.assertEquals(() -> Message.findByAuthor("bob").map(List::size), 0);
-        uniAsserter.assertEquals(() -> Message.findByAuthor("alice").map(List::size), 1);
-        uniAsserter.assertEquals(() -> Message.findByAuthor("alice").map(messages -> messages.get(0)).map(message1 -> message1.author), user);
+        uniAsserter.assertEquals(() -> Message.findByAuthor("bob2").map(List::size), 0);
+        uniAsserter.assertEquals(() -> Message.findByAuthor("alice2").map(List::size), 1);
+        uniAsserter.assertEquals(() -> Message.findByAuthor("alice2").map(messages -> messages.get(0)).map(message1 -> message1.author), user);
     }
 
     @Test
     @TestReactiveTransaction
     public void testCustomUser(UniAsserter uniAsserter) {
 
-        CustomUser user = new CustomUser("alice", "secret", "user");
+
+        CustomUser user = new CustomUser("alice2", "secret", "user");
 
         uniAsserter.execute(() -> Panache.withTransaction(user::persist));
 
         uniAsserter.execute(() -> Message.<Message>findAll().list().onItem().invoke(messages1 -> System.out.println(messages1)));
         uniAsserter.execute(() -> CustomUser.<CustomUser>findAll().list().onItem().invoke(users -> System.out.println(users)));
 
-        uniAsserter.assertEquals(() -> CustomUser.<CustomUser>listAll().map(List::size), 1);
-        uniAsserter.assertEquals(() -> CustomUser.findByName("alice"), user);
+        uniAsserter.assertEquals(() -> CustomUser.findByName("alice2"), user);
 
     }
 
@@ -54,8 +53,8 @@ public class EntitiesTest {
     @TestReactiveTransaction
     public void testUpdateAuthor(UniAsserter uniAsserter) {
 
-        CustomUser user1 = new CustomUser("alice", "secret", "admin");
-        CustomUser user2 = new CustomUser("bob", "secret", "user");
+        CustomUser user1 = new CustomUser("alice2", "secret", "admin");
+        CustomUser user2 = new CustomUser("bob2", "secret", "user");
 
         Message message = new Message("hello", user1, LocalDate.of(2024,12,12));
 
@@ -64,7 +63,7 @@ public class EntitiesTest {
 
         uniAsserter.execute(() -> Panache.withSession(message::persist));
 
-        uniAsserter.assertEquals(() -> message.updateAuthor("bob").map(Message::getAuthor), user2);
+        uniAsserter.assertEquals(() -> message.updateAuthor("bob2").map(Message::getAuthor), user2);
 
         uniAsserter.assertEquals(() -> Message.<Message>findById(message.id).map(message1 -> message1.author), user2);
 
@@ -74,8 +73,8 @@ public class EntitiesTest {
     @TestReactiveTransaction
     public void testLogEntry(UniAsserter uniAsserter) {
 
-        CustomUser user1 = new CustomUser("alice", "secret", "admin");
-        CustomUser user2 = new CustomUser("bob", "secret", "user");
+        CustomUser user1 = new CustomUser("alice2", "secret", "admin");
+        CustomUser user2 = new CustomUser("bob2", "secret", "user");
 
         Message message = new Message("hello", user1, LocalDate.of(2024, 12, 12));
 
@@ -87,10 +86,10 @@ public class EntitiesTest {
         uniAsserter.execute(() -> Panache.withTransaction(message::persist));
         uniAsserter.execute(() -> Panache.withTransaction(logEntry::persist));
 
-        uniAsserter.assertEquals(() -> LogEntry.findByInitiator("alice").map(List::size), 0);
-        uniAsserter.assertEquals(() -> LogEntry.findByInitiator("bob").map(List::size), 1);
+        uniAsserter.assertEquals(() -> LogEntry.findByInitiator("alice2").map(List::size), 0);
+        uniAsserter.assertEquals(() -> LogEntry.findByInitiator("bob2").map(List::size), 1);
 
-        uniAsserter.assertEquals(() -> LogEntry.findByInitiator("bob").map(logEntries -> logEntries.get(0)).map(logEntry1 -> logEntry1.message), message);
+        uniAsserter.assertEquals(() -> LogEntry.findByInitiator("bob2").map(logEntries -> logEntries.get(0)).map(logEntry1 -> logEntry1.message), message);
     }
 
 }

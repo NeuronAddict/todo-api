@@ -1,12 +1,11 @@
 package tech.woodandsafety.data;
 
+import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
 import io.smallrye.mutiny.Uni;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,9 +18,6 @@ public class Message extends PanacheEntity {
     @ManyToOne
     @JoinColumn(name = "author_id")
     CustomUser author;
-
-    @OneToMany
-    List<LogEntry> logEntry;
 
     LocalDate dueDate;
 
@@ -41,10 +37,6 @@ public class Message extends PanacheEntity {
         return author;
     }
 
-    public List<LogEntry> getLogEntry() {
-        return logEntry;
-    }
-
     public LocalDate getDueDate() {
         return dueDate;
     }
@@ -53,11 +45,14 @@ public class Message extends PanacheEntity {
         return find("SELECT m FROM Message m JOIN m.author a WHERE a.name = ?1", name).list();
     }
 
-    @Transactional
     Uni<Message> updateAuthor(String author) {
-        return CustomUser.findByName(author).flatMap(user -> {
+        return CustomUser.findByName(author)
+                .onItem()
+                .ifNull()
+                .failWith(() -> new UnsupportedOperationException("Author " + author + "not found"))
+                .flatMap(user -> {
             this.author = user;
-            return this.persistAndFlush();
+            return Panache.withTransaction(this::persistAndFlush);
         });
     }
 
@@ -66,7 +61,6 @@ public class Message extends PanacheEntity {
         return "Message{" +
                 "message='" + message + '\'' +
                 ", author=" + author +
-                ", logEntry=" + logEntry +
                 ", dueDate=" + dueDate +
                 '}';
     }

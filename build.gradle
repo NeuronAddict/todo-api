@@ -22,6 +22,8 @@ dependencies {
     testImplementation('io.quarkus:quarkus-test-hibernate-reactive-panache')
     testImplementation("io.quarkus:quarkus-test-oidc-server")
     testImplementation("io.quarkus:quarkus-panache-mock")
+    testImplementation("io.quarkus:quarkus-test-keycloak-server")
+    testImplementation("org.assertj:assertj-core:3.25.1")
 }
 
 group 'tech.woodandsafety'
