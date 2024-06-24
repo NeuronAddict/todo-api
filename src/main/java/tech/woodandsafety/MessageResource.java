@@ -56,7 +56,7 @@ public class MessageResource {
     public Uni<Response> post(MessageDTO message) {
 
         return Uni.createFrom().item(message).flatMap(messageMapper::toEntity)
-                .flatMap(message1 -> Panache.withTransaction(message1::<Message>persist))
+                .flatMap(message1 -> Panache.withTransaction(message1::<Message>persistAndFlush))
                 .log()
                 .map(message1 -> Response.created(URI.create(uriInfo.getPath() + "/" + message1.id)).build());
     }
@@ -72,7 +72,7 @@ public class MessageResource {
                 .failWith(() -> new UnsupportedOperationException("Can't find Message with id " + id))
                 .invoke(message -> System.out.println("Find message in PUT : " + message))
                         .flatMap(message -> messageMapper.updateWithDTO(message, messageDTO))
-                        .flatMap(message -> Panache.withTransaction(message::<Message>persist)
+                        .flatMap(message -> Panache.withTransaction(message::<Message>persistAndFlush)
                 )
                 .replaceWith(Response.noContent().build());
     }
