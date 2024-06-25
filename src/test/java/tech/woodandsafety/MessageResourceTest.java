@@ -34,7 +34,7 @@ class MessageResourceTest {
             new MessageDTO("hello", "alice", LocalDate.of(2024, 12, 12))
     );
 
-    MessageDTO newCreated = new MessageDTO("hello2", "alice3", LocalDate.of(2024, 12, 12));
+    MessageDTO newCreated = new MessageDTO("hello2", "alice", LocalDate.of(2024, 12, 12));
 
 
     @Test
