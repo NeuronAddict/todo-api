@@ -11,14 +11,14 @@ import java.util.List;
 @Entity
 public class LogEntry extends PanacheEntity {
 
-    public LogEntryType type;
+    LogEntryType type;
 
     @ManyToOne
-    public Message message;
+    Message message;
 
     @ManyToOne
     @JoinColumn(name = "initiator_id")
-    public CustomUser initiator;
+    CustomUser initiator;
 
     public LogEntry(LogEntryType type, Message message, CustomUser initiator) {
         this.type = type;
@@ -32,5 +32,17 @@ public class LogEntry extends PanacheEntity {
 
     public static Uni<List<LogEntry>> findByInitiator(String name) {
         return LogEntry.find("SELECT l FROM LogEntry l JOIN l.initiator i WHERE i.name = ?1", name).list();
+    }
+
+    public LogEntryType getType() {
+        return type;
+    }
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public CustomUser getInitiator() {
+        return initiator;
     }
 }
