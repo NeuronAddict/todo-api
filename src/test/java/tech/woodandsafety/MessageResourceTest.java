@@ -12,6 +12,7 @@ import jakarta.ws.rs.core.UriInfo;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.junit.jupiter.api.Test;
 import tech.woodandsafety.dto.MessageCreateDTO;
+import tech.woodandsafety.dto.MessageDisplayDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,12 +31,15 @@ class MessageResourceTest {
 
     KeycloakTestClient keycloakClient = new KeycloakTestClient();
 
-    List<MessageCreateDTO> messageCreateDTOS = List.of(
-            new MessageCreateDTO("hello", "alice", LocalDate.of(2024, 12, 12))
+    List<MessageDisplayDTO> messageDisplayDTOS = List.of(
+            new MessageDisplayDTO(0L, "hello", "alice", LocalDate.of(2024, 12, 12))
     );
 
     MessageCreateDTO newCreated = new MessageCreateDTO("hello2", "alice", LocalDate.of(2024, 12, 12));
+    MessageDisplayDTO newCreatedDisplayDTO = new MessageDisplayDTO(1L, "hello2", "alice", LocalDate.of(2024, 12, 12));
 
+    MessageCreateDTO modified = new MessageCreateDTO("hello3", "alice", LocalDate.of(2024, 12, 1));
+    MessageDisplayDTO modifiedDisplayDTO = new MessageDisplayDTO(1L, "hello3", "alice", LocalDate.of(2024, 12, 1));
 
     @Test
     public void testModifyMessage() {
@@ -46,12 +50,12 @@ class MessageResourceTest {
                 .log()
                 .everything(true)
                 .statusCode(200)
-                .extract().as(new TypeRef<List<MessageCreateDTO>>() {
-                })).isEqualTo(messageCreateDTOS);
+                .extract().as(new TypeRef<List<MessageDisplayDTO>>() {
+                })).isEqualTo(messageDisplayDTOS);
 
         String newEntityLocation = given().auth().oauth2(token("alice"))
                 .contentType(ContentType.JSON)
-                .body(messageCreateDTOS.get(0))
+                .body(newCreated)
                 .when().post("/messages")
                 .then()
                 .log()
@@ -66,12 +70,12 @@ class MessageResourceTest {
                 .log()
                 .everything(true)
                 .statusCode(RestResponse.StatusCode.OK)
-                .extract().as(MessageCreateDTO.class)).isEqualTo(messageCreateDTOS.get(0));
+                .extract().as(MessageDisplayDTO.class)).isEqualTo(newCreatedDisplayDTO);
 
 
         given().auth().oauth2(token("alice"))
                 .contentType(ContentType.JSON)
-                .body(newCreated)
+                .body(modified)
                 .when().put(newEntityLocation)
                 .then()
                 .log()
@@ -84,7 +88,7 @@ class MessageResourceTest {
                 .log()
                 .everything(true)
                 .statusCode(RestResponse.StatusCode.OK)
-                .extract().as(MessageCreateDTO.class)).isEqualTo(newCreated);
+                .extract().as(MessageDisplayDTO.class)).isEqualTo(modifiedDisplayDTO);
 
         given().auth().oauth2(token("alice"))
                 .when().delete(newEntityLocation)
@@ -99,8 +103,8 @@ class MessageResourceTest {
                 .log()
                 .everything(true)
                 .statusCode(200)
-                .extract().as(new TypeRef<List<MessageCreateDTO>>() {
-                })).isEqualTo(messageCreateDTOS);
+                .extract().as(new TypeRef<List<MessageDisplayDTO>>() {
+                })).isEqualTo(messageDisplayDTOS);
     }
 
     @Test
