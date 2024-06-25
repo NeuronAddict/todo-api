@@ -10,7 +10,7 @@ import jakarta.ws.rs.core.UriInfo;
 import org.jboss.logging.Logger;
 import tech.woodandsafety.data.Message;
 import tech.woodandsafety.data.MessageCreateMapper;
-import tech.woodandsafety.dto.MessageDTO;
+import tech.woodandsafety.dto.MessageCreateDTO;
 
 import java.net.URI;
 
@@ -56,7 +56,7 @@ public class MessageResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<Response> post(MessageDTO message) {
+    public Uni<Response> post(MessageCreateDTO message) {
 
         return Uni.createFrom().item(message).flatMap(messageMapper::toEntity)
                 .flatMap(message1 -> Panache.withTransaction(message1::<Message>persistAndFlush))
@@ -69,14 +69,14 @@ public class MessageResource {
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<Response> put(@PathParam("id") Long id, MessageDTO messageDTO) {
+    public Uni<Response> put(@PathParam("id") Long id, MessageCreateDTO messageCreateDTO) {
 
         return Message.<Message>findById(id)
                 .onItem()
                 .ifNull()
                 .failWith(() -> new UnsupportedOperationException("Can't find Message with id " + id))
                 .invoke(message -> System.out.println("Find message in PUT : " + message))
-                .flatMap(message -> messageMapper.updateWithDTO(message, messageDTO))
+                .flatMap(message -> messageMapper.updateWithDTO(message, messageCreateDTO))
                 .flatMap(message -> Panache.withTransaction(message::<Message>persistAndFlush)
                 )
                 .replaceWith(Response.noContent().build())
