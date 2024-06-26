@@ -2,18 +2,18 @@ package tech.woodandsafety.data;
 
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
 import io.smallrye.mutiny.Uni;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import java.util.List;
 
 @Entity
 public class LogEntry extends PanacheEntity {
 
+    @Enumerated(EnumType.STRING)
     LogEntryType type;
 
     @ManyToOne
+    @JoinColumn(name = "message_id")
     Message message;
 
     @ManyToOne
