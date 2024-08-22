@@ -11,7 +11,11 @@ public class MessageCreateMapper implements CreateMapper<Message, MessageDisplay
 
     @Override
     public Uni<Message> toEntity(MessageCreateDTO messageCreateDTO) {
-        return CustomUser.findByName(messageCreateDTO.author()).map(customUser -> new Message(messageCreateDTO.message(), customUser, messageCreateDTO.dueDate()));
+        return CustomUser.findByName(messageCreateDTO.author())
+                .onItem()
+                .ifNull()
+                .failWith(() -> new IllegalArgumentException(String.format("User %s not found", messageCreateDTO.author())))
+                .map(customUser -> new Message(messageCreateDTO.message(), customUser, messageCreateDTO.dueDate()));
     }
 
     @Override
