@@ -1,5 +1,6 @@
-build/
 .idea/
 README.md
 .gitignore
 .git/
+src/main/docker
+.dockerignore
