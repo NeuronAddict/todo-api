@@ -15,6 +15,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 env:
+  QUARKUS_PROFILE: cookie
   QUARKUS_DATASOURCE_REACTIVE_URL: postgresql:///todo-api-postgresql
 
 serviceAccount:
