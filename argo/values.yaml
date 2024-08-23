@@ -104,6 +104,11 @@ volumes:
 #     optional: false
 
 # Additional volumeMounts on the output Deployment definition.
+volumeMounts:
+  - name: tmp
+    mountPath: /tmp
+    readOnly: false
+
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
