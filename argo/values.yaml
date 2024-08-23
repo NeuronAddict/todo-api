@@ -83,11 +83,11 @@ resources: { }
 
 livenessProbe:
   httpGet:
-    path: /
+    path: /q/health/live
     port: http
 readinessProbe:
   httpGet:
-    path: /
+    path: /q/health/ready
     port: http
 
 autoscaling:
