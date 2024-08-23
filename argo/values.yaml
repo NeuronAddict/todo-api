@@ -14,6 +14,8 @@ imagePullSecrets: [ ]
 nameOverride: ""
 fullnameOverride: ""
 
+env:
+  QUARKUS_DATASOURCE_REACTIVE_URL: postgresql:///todo-api-postgresql
 
 serviceAccount:
   # Specifies whether a service account should be created
