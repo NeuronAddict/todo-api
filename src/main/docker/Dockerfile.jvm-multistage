@@ -3,6 +3,8 @@ FROM  docker.io/library/eclipse-temurin:21-jdk AS build
 
 USER root
 
+ENV JAVA_OPTS="-Dorg.gradle.daemon=false"
+
 COPY --chown=1000:1000 gradlew /code/gradlew
 COPY --chown=1000:1000 gradle /code/gradle
 COPY --chown=1000:1000 build.gradle /code/
@@ -13,9 +15,9 @@ USER 1000
 
 WORKDIR /code
 
-ENV GRADLE_OPTS="-Dorg.gradle.daemon=false"
-
 RUN ./gradlew wrapper --console=plain --no-watch-fs
+
+RUN ./gradlew dependencies --console=plain --no-watch-fs > /dev/null
 
 COPY src /code/src
 
