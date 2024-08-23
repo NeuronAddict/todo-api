@@ -17,6 +17,7 @@ dependencies {
     implementation "io.quarkus:quarkus-security-jpa-reactive"
     implementation "io.quarkus:quarkus-undertow"
     implementation "io.quarkus:quarkus-elytron-security-properties-file"
+    implementation "io.quarkus:quarkus-smallrye-health"
 
 //    implementation("io.quarkus:quarkus-oidc")
     testImplementation 'io.quarkus:quarkus-junit5'
