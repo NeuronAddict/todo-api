@@ -16,7 +16,7 @@ fullnameOverride: ""
 
 env:
   QUARKUS_PROFILE: cookie
-  QUARKUS_DATASOURCE_REACTIVE_URL: postgresql:///todo-api-postgresql
+  QUARKUS_DATASOURCE_REACTIVE_URL: postgresql://todo-api-postgresql:5432/todo-api
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -128,4 +128,4 @@ postgresql:
     usePasswordFiles: true
     username: todo-api
     password: your_password
-    database: django
+    database: todo-api
