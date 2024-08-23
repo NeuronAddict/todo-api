@@ -19,7 +19,7 @@ RUN ./gradlew wrapper --console=plain --no-watch-fs
 
 COPY src /code/src
 
-RUN ./gradlew assemble --console=plain --no-watch-fs
+RUN ./gradlew assemble -Dquarkus.profile=cookie --console=plain --no-watch-fs
 
 ## Stage 2 : create the docker final image
 FROM docker.io/library/eclipse-temurin:21.0.4_7-jre
