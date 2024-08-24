@@ -27,7 +27,7 @@ services:
     env_file:
       - .env
     ports:
-      - 127.0.0.1:8081:8080
+      - 127.0.0.1:8181:8080
     healthcheck:
       test: [ "CMD", "curl", "--fail", "http://localhost:8080/q/health/live"]
       interval: 3s
