@@ -24,6 +24,8 @@ services:
       QUARKUS_DATASOURCE_REACTIVE_URL: postgresql://postgresql:5432/todo-api
       # Schema generation can fail if container can't write on current folder
       QUARKUS_HIBERNATE_ORM_SCRIPTS_GENERATION: none
+    env_file:
+      - .env
     ports:
       - 127.0.0.1:8081:8080
     healthcheck:
