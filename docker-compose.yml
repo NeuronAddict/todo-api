@@ -23,7 +23,8 @@ services:
     environment:
       QUARKUS_DATASOURCE_REACTIVE_URL: postgresql://postgresql:5432/todo-api
       QUARKUS_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      QUARKUS_PROFILE: cookie
+      # Schema generation can fail if container can't write on current folder
+      QUARKUS_HIBERNATE_ORM_SCRIPTS_GENERATION: false
     ports:
       - 127.0.0.1:8081:8080
     healthcheck:
