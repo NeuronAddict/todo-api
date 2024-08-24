@@ -18,6 +18,8 @@ services:
     build:
       context: .
       dockerfile: src/main/docker/Dockerfile.jvm-multistage
+      args:
+        QUARKUS_PROFILE: ${QUARKUS_PROFILE}
     environment:
       QUARKUS_DATASOURCE_REACTIVE_URL: postgresql://postgresql:5432/todo-api
       QUARKUS_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
