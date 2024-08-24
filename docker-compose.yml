@@ -22,7 +22,6 @@ services:
         QUARKUS_PROFILE: ${QUARKUS_PROFILE}
     environment:
       QUARKUS_DATASOURCE_REACTIVE_URL: postgresql://postgresql:5432/todo-api
-      QUARKUS_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       # Schema generation can fail if container can't write on current folder
       QUARKUS_HIBERNATE_ORM_SCRIPTS_GENERATION: none
     ports:
@@ -41,7 +40,7 @@ services:
     environment:
       POSTGRESQL_DATABASE: todo-api
       POSTGRESQL_USERNAME: todo-api
-      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRESQL_PASSWORD: ${QUARKUS_DATASOURCE_PASSWORD}
     healthcheck:
       test: ["CMD", "pg_isready", "-h", "localhost", "-p", "5432", "-U", "todo-api"]
       interval: 3s
