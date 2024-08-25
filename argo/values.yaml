@@ -19,7 +19,7 @@ env:
   QUARKUS_DATASOURCE_REACTIVE_URL: 'postgresql://todo-api-postgresql:5432/todo-api'
   QUARKUS_DATASOURCE_JDBC_URL: 'jdbc:postgresql://todo-api-postgresql:5432/todo-api'
   QUARKUS_HTTP_CORS_ORIGIN: '*'
-  QUARKUS_HTTP_AUTH_FORM_COOKIE_SAME_SITE: 'None'
+  QUARKUS_HTTP_SAME_SITE_COOKIE__QUARKUS_SESSION__VALUE: 'None'
 
 serviceAccount:
   # Specifies whether a service account should be created
