@@ -35,7 +35,7 @@ class CreateMapperTest {
 
         asserter.execute(() -> PanacheMock.mock(CustomUser.class));
         asserter.execute(() -> Mockito.when(CustomUser.findByName("alice")).thenReturn(Uni.createFrom()
-                .item(new CustomUser("alice", "", "admin"))));
+                .item(new CustomUser("alice", "", "admin", "mail@mail.com", "0606"))));
 
         asserter.execute(() -> {
             LocalDate dueDate = LocalDate.of(2024, 12, 12);
@@ -53,7 +53,7 @@ class CreateMapperTest {
     public void should_convert_message_entity() {
         LocalDate dueDate = LocalDate.of(2024, 12, 12);
         Message message = new Message("hello",
-                new CustomUser("alice", "", "admin"),
+                new CustomUser("alice", "", "admin", "mail@mail.com", "0606"),
                 dueDate);
         message.id = 12L;
 
@@ -73,7 +73,7 @@ class CreateMapperTest {
         asserter.execute(() -> PanacheMock.mock(CustomUser.class));
         asserter.execute(() -> PanacheMock.mock(Message.class));
 
-        CustomUser user = new CustomUser("alice", "", "admin");
+        CustomUser user = new CustomUser("alice", "", "admin", "mail@mail.com", "0606");
 
         asserter.execute(() -> Mockito.when(CustomUser.findByName("alice")).thenReturn(Uni.createFrom()
                 .item(user)));
@@ -101,7 +101,7 @@ class CreateMapperTest {
     @Test
     public void should_convert_logEntry_entity() {
         LocalDate dueDate = LocalDate.of(2024, 12, 12);
-        CustomUser user = new CustomUser("alice", "", "admin");
+        CustomUser user = new CustomUser("alice", "", "admin", "mail@mail.com", "0606");
         Message message = new Message("hello",
                 user,
                 dueDate);
