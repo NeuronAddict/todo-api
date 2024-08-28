@@ -12,7 +12,7 @@ public class LogEntry extends PanacheEntity {
     @Enumerated(EnumType.STRING)
     LogEntryType type;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "message_id")
     Message message;
 
