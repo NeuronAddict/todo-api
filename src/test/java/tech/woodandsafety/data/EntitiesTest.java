@@ -16,7 +16,7 @@ public class EntitiesTest {
     @TestReactiveTransaction
     public void testMessage(UniAsserter uniAsserter) {
 
-        CustomUser user = new CustomUser("alice2", "secret", "user");
+        CustomUser user = new CustomUser("alice2", "secret", "user", "mail@mail.com", "0606");
 
         Message message = new Message("hello", user, LocalDate.of(2024, 12, 12));
 
@@ -38,7 +38,7 @@ public class EntitiesTest {
     public void testCustomUser(UniAsserter uniAsserter) {
 
 
-        CustomUser user = new CustomUser("alice2", "secret", "user");
+        CustomUser user = new CustomUser("alice2", "secret", "user", "mail@mail.com", "0606");
 
         uniAsserter.execute(() -> Panache.withTransaction(user::persist));
 
@@ -53,8 +53,8 @@ public class EntitiesTest {
     @TestReactiveTransaction
     public void testUpdateAuthor(UniAsserter uniAsserter) {
 
-        CustomUser user1 = new CustomUser("alice2", "secret", "admin");
-        CustomUser user2 = new CustomUser("bob2", "secret", "user");
+        CustomUser user1 = new CustomUser("alice2", "secret", "admin", "mail@mail.com", "0606");
+        CustomUser user2 = new CustomUser("bob2", "secret", "user", "mail2@mail.com", "0607");
 
         Message message = new Message("hello", user1, LocalDate.of(2024, 12, 12));
 
@@ -69,8 +69,8 @@ public class EntitiesTest {
     @TestReactiveTransaction
     public void testLogEntry(UniAsserter uniAsserter) {
 
-        CustomUser user1 = new CustomUser("alice2", "secret", "admin");
-        CustomUser user2 = new CustomUser("bob2", "secret", "user");
+        CustomUser user1 = new CustomUser("alice2", "secret", "admin", "mail@mail.com", "0606");
+        CustomUser user2 = new CustomUser("bob2", "secret", "user", "mail2@mail.com", "0607");
 
         Message message = new Message("hello", user1, LocalDate.of(2024, 12, 12));
 
