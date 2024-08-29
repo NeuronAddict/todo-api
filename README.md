@@ -1,5 +1,17 @@
 # todo-api
 
+## Démarrer le projet
+
+Vidéo associée aux exemples : https://youtu.be/pC5JASEqcho
+
+```
+cp .env.exemple .env
+# modifier le .env (voir vidéo)
+docker compose up --build
+```
+
+## quarkus
+
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
