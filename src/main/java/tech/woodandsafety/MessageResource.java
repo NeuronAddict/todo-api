@@ -84,8 +84,8 @@ public class MessageResource {
                 .invoke(LOGGER::error);
     }
 
-    @DELETE
-    @Path("/{id}")
+    @GET
+    @Path("/delete/{id}")
     @Produces(MediaType.TEXT_PLAIN)
     public Uni<Response> delete(@PathParam("id") Long id) {
         return Panache.withTransaction(() -> Message.<Message>findById(id)
