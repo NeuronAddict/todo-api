@@ -5,10 +5,24 @@
 Vidéo associée aux exemples : https://youtu.be/pC5JASEqcho
 
 ```
-cp .env.exemple .env
-# modifier le .env (voir vidéo)
-docker compose up --build
+$ cd docker/nginx
+$ bash mkcert.sh
+$ # répondre aux questions. Les réponses n'ont pas d'importance mais mettre todo-api.local dans le common name
+$ cd -
+$ cp .env.exemple .env
+$ # modifier le .env en fonction des besoins (voir vidéo)
+$ docker compose up --build
 ```
+
+## hosts
+
+Pour accéder aux domaines il faut mettre ceci dans le /etc/hosts :
+
+```
+127.0.0.1 todo-api.local todo-front.local
+```
+
+# Ci dessous, l'aide originale de quarkus
 
 ## quarkus
 
