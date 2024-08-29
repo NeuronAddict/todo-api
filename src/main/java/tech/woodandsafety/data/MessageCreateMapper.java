@@ -6,6 +6,8 @@ import tech.woodandsafety.dto.MessageCreateDTO;
 import tech.woodandsafety.dto.MessageDisplayDTO;
 import tech.woodandsafety.mapper.CreateMapper;
 
+import java.time.LocalDate;
+
 @Singleton
 public class MessageCreateMapper implements CreateMapper<Message, MessageDisplayDTO, MessageCreateDTO> {
 
@@ -27,6 +29,7 @@ public class MessageCreateMapper implements CreateMapper<Message, MessageDisplay
 
     @Override
     public MessageDisplayDTO toDisplayDTO(Message message) {
+        if (message == null) return new MessageDisplayDTO(0L, "", "", LocalDate.MIN);
         return new MessageDisplayDTO(message.id, message.getMessage(), message.getAuthor().getName(), message.getDueDate());
     }
 
