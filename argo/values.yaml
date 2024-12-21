@@ -126,7 +126,7 @@ tolerations: [ ]
 affinity: { }
 
 postgresql:
-  enabled: true
+  enabled: false
   auth:
     username: todo-api
     database: todo-api
